@@ -40,7 +40,7 @@ function dayRouteUrl(places: Place[]) {
 const navButtonClass = (active: boolean) =>
   `rounded-full px-4 py-2 text-xs font-semibold transition sm:text-sm ${
     active
-      ? "bg-teal-300 text-slate-900"
+      ? "bg-accent text-slate-900"
       : "bg-white/10 text-white/80 ring-1 ring-white/25 hover:bg-white/20"
   }`;
 
@@ -81,7 +81,7 @@ export default function TripPlanner() {
           <h1 className="text-[22px] leading-snug font-bold tracking-tight">
             {trip.members}
             <br />
-            <span className="text-teal-300">{trip.title}</span>
+            <span className="text-accent">{trip.title}</span>
           </h1>
 
           <div className="mt-4 flex flex-wrap items-center gap-2">

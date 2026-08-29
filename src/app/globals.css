@@ -6,6 +6,21 @@
     "SUIT Variable", -apple-system, BlinkMacSystemFont, "Segoe UI",
     "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* 포인트 컬러 — text-accent / bg-accent / border-accent 로 쓴다 */
+  --color-accent: var(--accent);
+}
+
+:root {
+  /* lab() 을 못 읽는 브라우저용 sRGB 폴백. 두 값은 같은 색이다 */
+  --accent: #9ef6b5;
+}
+
+/* 커스텀 속성은 파싱 단계에서 무엇이든 통과하므로 @supports 로 걸러야 한다 */
+@supports (color: lab(90 -37.56 22.57)) {
+  :root {
+    --accent: lab(90 -37.56 22.57);
+  }
 }
 
 html {
