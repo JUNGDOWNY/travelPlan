@@ -50,7 +50,6 @@ export const tripDays: TripDay[] = [
     places: [
       {
         name: "인천국제공항 T1 → 이스탄불",
-        voucher: "flight-outbound",
         category: "flight",
         time: "00:05 → 05:55",
         desc: "터키항공 TK91 · 이스탄불 환승 대기 2시간 50분",
@@ -59,7 +58,6 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "이스탄불 공항 → 헬싱키",
-        voucher: "flight-outbound",
         category: "flight",
         time: "08:45 → 11:30",
         desc: "터키항공 TK1761 · 헬싱키 환승 대기 1시간 35분",
@@ -68,15 +66,15 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "헬싱키 반타 공항 → 로바니에미",
-        voucher: "flight-outbound",
         category: "flight",
         time: "13:05 → 14:25",
-        desc: "터키항공 TK8297 · 총 이동 21시간 20분",
+        desc: "터키항공 TK8297",
         lat: 60.3172,
         lng: 24.9633,
       },
       {
         name: "로바니에미 숙소",
+        voucher: "stay-rovaniemi",
         category: "stay",
         time: "15:30",
         desc: "Lapinkävijäntie 19 a12, 96100 Rovaniemi · 공항에서 차로 약 15분",
@@ -204,7 +202,6 @@ export const tripDays: TripDay[] = [
     places: [
       {
         name: "로바니에미 공항",
-        voucher: "flight-hel-rvn",
         category: "flight",
         time: "09:40",
         desc: "헬싱키발 국내선 1시간 20분",
@@ -352,7 +349,6 @@ export const tripDays: TripDay[] = [
     places: [
       {
         name: "로바니에미 공항",
-        voucher: "flight-rvn-vie",
         category: "flight",
         time: "10:15",
         desc: "헬싱키 경유 빈행",
@@ -361,7 +357,6 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "빈 국제공항",
-        voucher: "flight-rvn-vie",
         category: "flight",
         time: "17:05",
         desc: "CAT 공항특급으로 시내까지 16분",
@@ -630,7 +625,6 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "빈 국제공항",
-        voucher: "flight-inbound",
         category: "flight",
         time: "11:30",
         desc: "헬싱키 경유 인천행 · 13:40 출발",

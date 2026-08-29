@@ -9,6 +9,8 @@ type Props = {
   places: Place[];
   activeIndex: number | null;
   onSelect: (index: number) => void;
+  /** 팝업의 "바우처" 버튼 */
+  onVoucher: (id: string) => void;
 };
 
 /** 번호가 찍힌 원형 핀. 선택된 핀은 크게 + 링이 생긴다. */
@@ -34,32 +36,68 @@ function numberedIcon(index: number, place: Place, active: boolean) {
   });
 }
 
-/** 핀 팝업: 분류 · 이름 · 시각까지만 (상세는 리스트에서 본다) */
-function popupHtml(index: number, place: Place) {
-  const meta = categoryMeta[place.category];
-  const time = place.time
-    ? `<p style="margin:4px 0 0;font-size:12px;font-weight:600;color:#334155">${place.time}</p>`
-    : "";
-  return `
-    <div style="min-width:150px">
-      <p style="margin:0;font-size:11px;color:${meta.color};font-weight:600">
-        ${index + 1}. ${meta.emoji} ${meta.label}
-      </p>
-      <p style="margin:2px 0 0;font-size:14px;font-weight:700;color:#0f172a">${place.name}</p>
-      ${time}
-    </div>`;
+function mapsUrl(place: Place) {
+  return `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`;
 }
 
-export default function TripMap({ places, activeIndex, onSelect }: Props) {
+const POPUP_PILL =
+  "inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-600 no-underline transition hover:bg-slate-200 hover:text-slate-900";
+
+/** 핀 팝업: 분류 · 위치 · 내용 + 구글맵/바우처 버튼 */
+function popupNode(
+  index: number,
+  place: Place,
+  onVoucher: (id: string) => void,
+) {
+  const meta = categoryMeta[place.category];
+  // 공항은 구글맵을 열어봐야 쓸모가 없으므로 항공편은 구글맵 버튼을 뺀다
+  const actions = [
+    place.category !== "flight" &&
+      `<a href="${mapsUrl(place)}" target="_blank" rel="noreferrer" class="${POPUP_PILL}">구글맵</a>`,
+    place.voucher &&
+      `<button type="button" data-voucher class="${POPUP_PILL}" style="cursor:pointer">바우처</button>`,
+  ].filter(Boolean);
+
+  const el = document.createElement("div");
+  el.style.minWidth = "184px";
+  el.innerHTML = `
+    <p style="margin:0;font-size:11px;font-weight:600;color:${meta.color}">
+      ${index + 1}. ${meta.emoji} ${meta.label}
+    </p>
+    <p style="margin:2px 0 0;font-size:14px;font-weight:700;color:#0f172a">${place.name}</p>
+    ${
+      place.desc
+        ? `<p style="margin:6px 0 0;font-size:12px;line-height:1.5;color:#475569">${place.desc}</p>`
+        : ""
+    }
+    ${actions.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">${actions.join("")}</div>` : ""}`;
+
+  const voucherId = place.voucher;
+  if (voucherId) {
+    el.querySelector("[data-voucher]")?.addEventListener("click", () =>
+      onVoucher(voucherId),
+    );
+  }
+  return el;
+}
+
+export default function TripMap({
+  places,
+  activeIndex,
+  onSelect,
+  onVoucher,
+}: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
   const markersRef = useRef<L.Marker[]>([]);
   const lineRef = useRef<L.Polyline | null>(null);
   // 최신 onSelect 를 지도 재생성 없이 참조하기 위한 보관함
   const onSelectRef = useRef(onSelect);
+  const onVoucherRef = useRef(onVoucher);
   useEffect(() => {
     onSelectRef.current = onSelect;
-  }, [onSelect]);
+    onVoucherRef.current = onVoucher;
+  }, [onSelect, onVoucher]);
 
   // 지도 생성 (마운트 시 1회)
   useEffect(() => {
@@ -115,7 +153,13 @@ export default function TripMap({ places, activeIndex, onSelect }: Props) {
         title: place.name,
       })
         .addTo(map)
-        .bindPopup(popupHtml(i, place), { closeButton: false, offset: [0, -4] })
+        .bindPopup(
+          popupNode(i, place, (id) => onVoucherRef.current(id)),
+          {
+            closeButton: false,
+            offset: [0, -4],
+          },
+        )
         .on("click", () => onSelectRef.current(i));
       return marker;
     });

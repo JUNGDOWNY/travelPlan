@@ -10,10 +10,12 @@ const isProd = process.env.NODE_ENV === "production";
 const repo = process.env.GITHUB_REPOSITORY?.split("/")[1] ?? "auroraTravel";
 const needsBasePath = isProd && !repo.endsWith(".github.io");
 
+const basePath = needsBasePath ? `/${repo}` : "";
+
 const nextConfig: NextConfig = {
   output: "export", // 정적 HTML로 내보내기 (out/)
-  basePath: needsBasePath ? `/${repo}` : "",
-  assetPrefix: needsBasePath ? `/${repo}/` : "",
+  basePath,
+  assetPrefix: basePath ? `${basePath}/` : "",
   images: { unoptimized: true }, // 정적 배포에서는 이미지 최적화 서버가 없다
   trailingSlash: true,
 };
