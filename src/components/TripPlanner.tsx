@@ -40,8 +40,8 @@ function dayRouteUrl(places: Place[]) {
 const navButtonClass = (active: boolean) =>
   `rounded-full px-4 py-2 text-xs font-semibold transition sm:text-sm ${
     active
-      ? "bg-white text-indigo-700 shadow-sm"
-      : "bg-white/20 text-white ring-1 ring-white/40 hover:bg-white/30"
+      ? "bg-slate-900 text-white"
+      : "border border-slate-300 bg-white text-slate-600 hover:bg-slate-100"
   }`;
 
 /** 기기의 오늘 날짜. 서버 프리렌더 시점에는 알 수 없으므로 첫날을 스냅샷으로 쓴다 */
@@ -76,14 +76,12 @@ export default function TripPlanner() {
   return (
     <div className="flex min-h-dvh flex-col bg-slate-50">
       {/* ── 상단: 제목 + 버튼 ─────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 bg-[linear-gradient(115deg,#22d3ee_0%,#6366f1_52%,#c026d3_100%)] text-white shadow-lg shadow-indigo-500/20">
-        {/* 밝은 하이라이트 두 겹 — 그라데이션이 탁해 보이지 않게 */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_10%_-20%,rgba(255,255,255,.45),transparent_55%),radial-gradient(ellipse_at_90%_0%,rgba(253,224,71,.4),transparent_50%)]" />
-        <div className="relative mx-auto w-full max-w-6xl px-4 pt-5 pb-3 sm:px-6 sm:pt-7 sm:pb-4">
-          <h1 className="text-[22px] leading-snug font-bold tracking-tight drop-shadow-sm">
+      <header className="sticky top-0 z-50 border-b border-slate-200 bg-white/90 text-slate-900 backdrop-blur">
+        <div className="mx-auto w-full max-w-6xl px-4 pt-5 pb-3 sm:px-6 sm:pt-7 sm:pb-4">
+          <h1 className="text-[22px] leading-snug font-bold tracking-tight">
             {trip.members}
             <br />
-            <span className="text-yellow-200">{trip.title}</span>
+            <span className="text-teal-600">{trip.title}</span>
           </h1>
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
