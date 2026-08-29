@@ -1,7 +1,22 @@
+"use client";
+
+import { useEffect } from "react";
 import { formatLong } from "@/lib/date";
 import { voucherKindMeta, vouchers } from "@/data/vouchers";
 
-export default function VoucherList() {
+/** 일정 화면에서 넘어온 포커스 요청. n 은 같은 바우처를 다시 눌러도 스크롤되게 하는 카운터 */
+type Props = {
+  focus?: { id: string; n: number } | null;
+};
+
+export default function VoucherList({ focus }: Props) {
+  useEffect(() => {
+    if (!focus) return;
+    document
+      .getElementById(`voucher-${focus.id}`)
+      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [focus]);
+
   // 날짜별로 묶어서 순서대로 보여준다
   const grouped = vouchers.reduce<Record<string, typeof vouchers>>(
     (acc, voucher) => {
@@ -27,8 +42,13 @@ export default function VoucherList() {
               const meta = voucherKindMeta[voucher.kind];
               return (
                 <li
-                  key={`${voucher.code}-${voucher.title}`}
-                  className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
+                  key={voucher.id}
+                  id={`voucher-${voucher.id}`}
+                  className={`scroll-mt-24 rounded-2xl border bg-white p-4 shadow-sm transition ${
+                    focus?.id === voucher.id
+                      ? "border-slate-900 ring-2 ring-slate-900/10"
+                      : "border-slate-200"
+                  }`}
                 >
                   <div className="flex flex-wrap items-center gap-2">
                     <span

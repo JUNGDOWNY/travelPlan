@@ -34,28 +34,19 @@ function numberedIcon(index: number, place: Place, active: boolean) {
   });
 }
 
-function googleMapsUrl(place: Place) {
-  return `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`;
-}
-
+/** 핀 팝업: 분류 · 이름 · 시각까지만 (상세는 리스트에서 본다) */
 function popupHtml(index: number, place: Place) {
   const meta = categoryMeta[place.category];
-  const time = place.time ? `<b>${place.time}</b> · ` : "";
-  const desc = place.desc
-    ? `<p style="margin:6px 0 0;color:#475569;font-size:12px;line-height:1.5">${place.desc}</p>`
+  const time = place.time
+    ? `<p style="margin:4px 0 0;font-size:12px;font-weight:600;color:#334155">${place.time}</p>`
     : "";
   return `
-    <div style="min-width:170px">
+    <div style="min-width:150px">
       <p style="margin:0;font-size:11px;color:${meta.color};font-weight:600">
         ${index + 1}. ${meta.emoji} ${meta.label}
       </p>
       <p style="margin:2px 0 0;font-size:14px;font-weight:700;color:#0f172a">${place.name}</p>
-      <p style="margin:4px 0 0;font-size:12px;color:#64748b">${time}${place.lat.toFixed(4)}, ${place.lng.toFixed(4)}</p>
-      ${desc}
-      <a href="${googleMapsUrl(place)}" target="_blank" rel="noreferrer"
-         style="display:inline-block;margin-top:8px;font-size:12px;font-weight:600;color:#2563eb">
-        구글맵에서 열기 ↗
-      </a>
+      ${time}
     </div>`;
 }
 

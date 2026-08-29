@@ -13,6 +13,8 @@ export type Place = {
   /** "10:30" 같은 예정 시각. 없으면 표시하지 않는다 */
   time?: string;
   desc?: string;
+  /** 연결된 바우처 id (있으면 리스트에 바우처 버튼이 나온다) */
+  voucher?: string;
   lat: number;
   lng: number;
 };
@@ -48,6 +50,7 @@ export const tripDays: TripDay[] = [
     places: [
       {
         name: "인천국제공항 T1 → 이스탄불",
+        voucher: "flight-outbound",
         category: "flight",
         time: "00:05 → 05:55",
         desc: "터키항공 TK91 · 이스탄불 환승 대기 2시간 50분",
@@ -56,6 +59,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "이스탄불 공항 → 헬싱키",
+        voucher: "flight-outbound",
         category: "flight",
         time: "08:45 → 11:30",
         desc: "터키항공 TK1761 · 헬싱키 환승 대기 1시간 35분",
@@ -64,11 +68,20 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "헬싱키 반타 공항 → 로바니에미",
+        voucher: "flight-outbound",
         category: "flight",
         time: "13:05 → 14:25",
         desc: "터키항공 TK8297 · 총 이동 21시간 20분",
         lat: 60.3172,
         lng: 24.9633,
+      },
+      {
+        name: "로바니에미 숙소",
+        category: "stay",
+        time: "15:30",
+        desc: "Lapinkävijäntie 19 a12, 96100 Rovaniemi · 공항에서 차로 약 15분",
+        lat: 66.5031,
+        lng: 25.7211,
       },
     ],
   },
@@ -119,6 +132,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "호텔 캄프 (숙소)",
+        voucher: "stay-kamp",
         category: "stay",
         time: "20:00",
         desc: "복귀",
@@ -174,6 +188,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "호텔 캄프 (숙소)",
+        voucher: "stay-kamp",
         category: "stay",
         time: "21:00",
         desc: "로바니에미행 짐 정리",
@@ -189,6 +204,7 @@ export const tripDays: TripDay[] = [
     places: [
       {
         name: "로바니에미 공항",
+        voucher: "flight-hel-rvn",
         category: "flight",
         time: "09:40",
         desc: "헬싱키발 국내선 1시간 20분",
@@ -213,6 +229,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "글래스 이글루 리조트 (숙소)",
+        voucher: "stay-igloo",
         category: "stay",
         time: "17:00",
         desc: "3박 · 침대에 누워서 오로라 관측",
@@ -236,6 +253,7 @@ export const tripDays: TripDay[] = [
     places: [
       {
         name: "베어힐 허스키 농장",
+        voucher: "tour-husky",
         category: "sight",
         time: "09:30",
         desc: "허스키 썰매 10km · 방한복 대여 포함",
@@ -244,6 +262,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "순록 농장 (코니셰바)",
+        voucher: "tour-husky",
         category: "sight",
         time: "13:00",
         desc: "순록 썰매 + 북극권 운전면허증 발급",
@@ -268,6 +287,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "글래스 이글루 리조트 (숙소)",
+        voucher: "stay-igloo",
         category: "stay",
         time: "21:00",
         desc: "이글루에서 오로라 대기",
@@ -307,6 +327,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "오로라 헌팅 투어 (버스 픽업)",
+        voucher: "tour-aurora",
         category: "sight",
         time: "20:30",
         desc: "날씨 보고 이동 · 이번 여행 마지막 오로라 기회",
@@ -315,6 +336,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "글래스 이글루 리조트 (숙소)",
+        voucher: "stay-igloo",
         category: "stay",
         time: "01:00",
         desc: "다음 날 빈행 준비",
@@ -330,6 +352,7 @@ export const tripDays: TripDay[] = [
     places: [
       {
         name: "로바니에미 공항",
+        voucher: "flight-rvn-vie",
         category: "flight",
         time: "10:15",
         desc: "헬싱키 경유 빈행",
@@ -338,6 +361,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "빈 국제공항",
+        voucher: "flight-rvn-vie",
         category: "flight",
         time: "17:05",
         desc: "CAT 공항특급으로 시내까지 16분",
@@ -346,6 +370,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "호텔 자허 (숙소)",
+        voucher: "stay-sacher",
         category: "stay",
         time: "18:30",
         desc: "5박 · 오페라극장 바로 옆",
@@ -377,6 +402,7 @@ export const tripDays: TripDay[] = [
     places: [
       {
         name: "쇤브룬 궁전",
+        voucher: "tour-schonbrunn",
         category: "sight",
         time: "09:30",
         desc: "그랜드 투어 40실 · 온라인 예약분 사용",
@@ -409,6 +435,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "호텔 자허 (숙소)",
+        voucher: "stay-sacher",
         category: "stay",
         time: "21:00",
         desc: "복귀",
@@ -424,6 +451,7 @@ export const tripDays: TripDay[] = [
     places: [
       {
         name: "빈 중앙역",
+        voucher: "rail-salzburg",
         category: "move",
         time: "07:10",
         desc: "레일제트 탑승 · 잘츠부르크까지 2시간 22분",
@@ -464,6 +492,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "호텔 자허 (숙소)",
+        voucher: "stay-sacher",
         category: "stay",
         time: "22:30",
         desc: "빈으로 복귀",
@@ -479,6 +508,7 @@ export const tripDays: TripDay[] = [
     places: [
       {
         name: "빈 중앙역",
+        voucher: "rail-hallstatt",
         category: "move",
         time: "06:50",
         desc: "아트낭푸흐하임 경유 · 편도 약 4시간",
@@ -511,6 +541,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "호텔 자허 (숙소)",
+        voucher: "stay-sacher",
         category: "stay",
         time: "22:00",
         desc: "빈으로 복귀",
@@ -558,6 +589,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "호텔 자허 (숙소)",
+        voucher: "stay-sacher",
         category: "stay",
         time: "22:00",
         desc: "짐 싸기",
@@ -573,6 +605,7 @@ export const tripDays: TripDay[] = [
     places: [
       {
         name: "호텔 자허 (숙소)",
+        voucher: "stay-sacher",
         category: "stay",
         time: "07:00",
         desc: "체크아웃 · 짐은 프런트에 보관",
@@ -597,6 +630,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "빈 국제공항",
+        voucher: "flight-inbound",
         category: "flight",
         time: "11:30",
         desc: "헬싱키 경유 인천행 · 13:40 출발",
