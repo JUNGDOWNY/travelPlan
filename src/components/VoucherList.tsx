@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { formatLong } from "@/lib/date";
-import { voucherFolderUrl, voucherKindMeta, vouchers } from "@/data/vouchers";
+import { voucherKindMeta, vouchers } from "@/data/vouchers";
 
 /** 일정 화면에서 넘어온 포커스 요청. n 은 같은 바우처를 다시 눌러도 스크롤되게 하는 카운터 */
 type Props = {
@@ -31,18 +31,6 @@ export default function VoucherList({ focus }: Props) {
     <div className="max-w-3xl">
       <p className="text-sm text-slate-500">
         항공 · 숙소 · 투어 예약 확인서 {vouchers.length}건
-      </p>
-      <a
-        href={voucherFolderUrl}
-        target="_blank"
-        rel="noreferrer"
-        className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-slate-900 px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-slate-700"
-      >
-        <span aria-hidden>📁</span> 드라이브 폴더 열기 ↗
-      </a>
-      <p className="mt-1.5 text-[11px] text-slate-400">
-        원본은 구글 드라이브에 있습니다 · 공유받은 구글 계정으로 로그인해야
-        열립니다
       </p>
       {dates.map((date) => (
         <section key={date} className="mt-5">

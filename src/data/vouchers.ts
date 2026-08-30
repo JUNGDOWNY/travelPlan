@@ -23,13 +23,6 @@ export type Voucher = {
   href?: string;
 };
 
-/**
- * 확인서 원본을 모아 둔 구글 드라이브 폴더. "제한됨" 공유이므로
- * 링크가 공개돼도 폴더에 추가된 구글 계정만 열 수 있다.
- */
-export const voucherFolderUrl =
-  "https://drive.google.com/drive/folders/1IhTYNkoWIAdQua10dSQa20TSHLCCrOMp?usp=sharing";
-
 export const voucherKindMeta: Record<
   VoucherKind,
   { label: string; emoji: string; tone: string }
@@ -46,25 +39,12 @@ export const voucherKindMeta: Record<
 
 export const vouchers: Voucher[] = [
   {
-    kind: "flight",
-    id: "flight-outbound",
-    title: "인천 → 헬싱키 · AY42",
-    subtitle: "핀에어 · 11/28 10:05 출발, 14:20 도착",
-    date: "2026-11-28",
-  },
-  {
-    kind: "stay",
-    id: "stay-kamp",
-    title: "호텔 캄프 헬싱키",
-    subtitle: "트윈 + 엑스트라 베드 · 3박",
-    date: "2026-11-28",
-  },
-  {
     kind: "stay",
     id: "stay-rovaniemi",
     title: "로바니에미 숙소",
-    subtitle: "Lapinkävijäntie 19 a12, 96100 Rovaniemi · 11/28 체크인",
+    subtitle: "11/28 체크인 · 공항에서 택시로 15분 (Bolt 앱)",
     date: "2026-11-28",
+    href: "https://drive.google.com/file/d/198Vr0UatN-xLWcvJ9MFq1G0eRYnQRBDz/view?usp=drive_link",
   },
   {
     kind: "flight",

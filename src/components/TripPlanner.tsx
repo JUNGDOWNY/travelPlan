@@ -1,7 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useRef, useState, useSyncExternalStore } from "react";
 import DatePickerModal from "@/components/DatePickerModal";
 import VoucherList from "@/components/VoucherList";
 import { categoryMeta, trip, tripDays, type Place } from "@/data/trip";
@@ -83,6 +83,9 @@ export default function TripPlanner() {
     n: number;
   } | null>(null);
 
+  // 리스트에서 항목을 누를 때 지도를 화면에 보이게 하려고 잡아 둔다
+  const mapSectionRef = useRef<HTMLElement>(null);
+
   const todayKey = useSyncExternalStore(
     subscribeNoop,
     () => toKey(new Date()),
@@ -96,6 +99,18 @@ export default function TripPlanner() {
   const dayIndex = tripDays.findIndex((d) => d.date === selectedDate);
   const day = tripDays[dayIndex];
   const places = useMemo(() => day.places, [day]);
+
+  /** 리스트 항목 선택 → 지도 핀 강조·팝업 + 지도로 스크롤 */
+  const selectPlace = (index: number) => {
+    const off = index === activeIndex;
+    setActiveIndex(off ? null : index);
+    if (!off) {
+      mapSectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
 
   /** 리스트의 바우처 버튼 → 바우처 탭의 해당 카드로 이동 */
   const openVoucher = (id: string) => {
@@ -146,27 +161,25 @@ export default function TripPlanner() {
 
         {tab === "plan" && (
           <>
-            <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
-                  {day.title}
-                </h2>
-                <p className="text-xs text-slate-500 sm:text-sm">
-                  DAY {dayIndex + 1} · {formatLong(day.date)} · {day.city} ·{" "}
-                  {places.length}곳
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setCalendarOpen(true)}
-                className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100"
-              >
-                <span aria-hidden>📅</span> 날짜 변경
-              </button>
+            {/* 날짜 변경 → 하루 요약 → 지도 순서 */}
+            <button
+              type="button"
+              onClick={() => setCalendarOpen(true)}
+              className="inline-flex h-[26px] items-center gap-1 rounded-full border border-slate-300 bg-white px-2.5 text-[11px] font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100"
+            >
+              <span aria-hidden>📅</span> 날짜 변경
+            </button>
+
+            <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
+                {day.title}
+              </h2>
+              <p className="text-xs text-slate-500 sm:text-sm">
+                DAY {dayIndex + 1} · {formatLong(day.date)}
+              </p>
             </div>
 
-            {/* 지도: 날짜 아래 고정 배치 (리스트보다 위) */}
-            <section className="mt-3">
+            <section ref={mapSectionRef} className="mt-3 scroll-mt-28">
               <div className="relative z-0 h-[38vh] min-h-[240px] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm sm:h-[42vh] lg:h-[46vh]">
                 <TripMap
                   places={places}
@@ -194,15 +207,20 @@ export default function TripPlanner() {
                           : "border-slate-200"
                       }`}
                     >
-                      <div className="flex gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => selectPlace(i)}
+                        aria-pressed={active}
+                        className="flex w-full gap-2.5 text-left"
+                      >
                         <span
                           className="mt-px grid size-5 shrink-0 place-items-center rounded-full text-[10px] font-bold text-white"
                           style={{ background: meta.color }}
                         >
                           {i + 1}
                         </span>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex flex-wrap items-center gap-x-2">
+                        <span className="min-w-0 flex-1">
+                          <span className="flex flex-wrap items-center gap-x-2">
                             {place.time && (
                               <span className="text-xs font-semibold text-slate-900 tabular-nums">
                                 {place.time}
@@ -214,43 +232,44 @@ export default function TripPlanner() {
                             >
                               {meta.emoji} {meta.label}
                             </span>
-                          </div>
-                          <p className="text-sm font-semibold text-slate-900">
+                          </span>
+                          <span className="block text-sm font-semibold text-slate-900">
                             {place.name}
-                          </p>
+                          </span>
                           {place.desc && (
-                            <p className="mt-0.5 text-xs leading-snug text-slate-500">
+                            <span className="mt-0.5 block text-xs leading-snug text-slate-500">
                               {place.desc}
-                            </p>
+                            </span>
                           )}
-                          {/* 이동 버튼 (항공편은 없음) */}
-                          {(showMaps || voucherId) && (
-                            <div className="mt-1.5 flex flex-wrap gap-1">
-                              {showMaps && (
-                                <a
-                                  href={placeMapsUrl(place)}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className={actionClass}
-                                >
-                                  <PinIcon />
-                                  구글맵
-                                </a>
-                              )}
-                              {voucherId && (
-                                <button
-                                  type="button"
-                                  onClick={() => openVoucher(voucherId)}
-                                  className={actionClass}
-                                >
-                                  <TicketIcon />
-                                  바우처
-                                </button>
-                              )}
-                            </div>
+                        </span>
+                      </button>
+
+                      {/* 이동 버튼 (항공편은 없음). 배지 폭만큼 들여쓴다 */}
+                      {(showMaps || voucherId) && (
+                        <div className="mt-1.5 flex flex-wrap gap-1 pl-[30px]">
+                          {showMaps && (
+                            <a
+                              href={placeMapsUrl(place)}
+                              target="_blank"
+                              rel="noreferrer"
+                              className={actionClass}
+                            >
+                              <PinIcon />
+                              구글맵
+                            </a>
+                          )}
+                          {voucherId && (
+                            <button
+                              type="button"
+                              onClick={() => openVoucher(voucherId)}
+                              className={actionClass}
+                            >
+                              <TicketIcon />
+                              바우처
+                            </button>
                           )}
                         </div>
-                      </div>
+                      )}
                     </div>
                   </li>
                 );
