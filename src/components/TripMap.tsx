@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { categoryMeta, type Place } from "@/data/trip";
+import { voucherHref, voucherLabel } from "@/data/vouchers";
 
 type Props = {
   places: Place[];
@@ -37,7 +38,10 @@ function numberedIcon(index: number, place: Place, active: boolean) {
 }
 
 function mapsUrl(place: Place) {
-  return `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`;
+  return (
+    place.mapsUrl ??
+    `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`
+  );
 }
 
 const POPUP_PILL =
@@ -50,12 +54,21 @@ function popupNode(
   onVoucher: (id: string) => void,
 ) {
   const meta = categoryMeta[place.category];
+  const voucherId = place.voucher;
+  const voucherLink = voucherId ? voucherHref(voucherId) : undefined;
   // 공항은 구글맵을 열어봐야 쓸모가 없으므로 항공편은 구글맵 버튼을 뺀다
+  // 바우처는 확인서 링크가 있으면 바로 열고, 없으면 바우처 탭으로 보낸다
   const actions = [
     place.category !== "flight" &&
       `<a href="${mapsUrl(place)}" target="_blank" rel="noreferrer" class="${POPUP_PILL}">구글맵</a>`,
-    place.voucher &&
-      `<button type="button" data-voucher class="${POPUP_PILL}" style="cursor:pointer">바우처</button>`,
+    voucherId &&
+      (voucherLink
+        ? `<a href="${voucherLink}" target="_blank" rel="noreferrer" class="${POPUP_PILL}">${voucherLabel(voucherId)}</a>`
+        : `<button type="button" data-voucher class="${POPUP_PILL}" style="cursor:pointer">${voucherLabel(voucherId)}</button>`),
+    ...(place.links ?? []).map(
+      (link) =>
+        `<a href="${link.href}" target="_blank" rel="noreferrer" class="${POPUP_PILL}">${link.label}</a>`,
+    ),
   ].filter(Boolean);
 
   const el = document.createElement("div");
@@ -67,13 +80,12 @@ function popupNode(
     <p style="margin:2px 0 0;font-size:14px;font-weight:700;color:#0f172a">${place.name}</p>
     ${
       place.desc
-        ? `<p style="margin:6px 0 0;font-size:12px;line-height:1.5;color:#475569">${place.desc}</p>`
+        ? `<p style="margin:6px 0 0;font-size:12px;line-height:1.5;color:#475569;white-space:pre-line">${place.desc}</p>`
         : ""
     }
     ${actions.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">${actions.join("")}</div>` : ""}`;
 
-  const voucherId = place.voucher;
-  if (voucherId) {
+  if (voucherId && !voucherLink) {
     el.querySelector("[data-voucher]")?.addEventListener("click", () =>
       onVoucher(voucherId),
     );
@@ -107,14 +119,12 @@ export default function TripMap({
       scrollWheelZoom: false,
     }).setView([60.17, 24.94], 12);
 
-    L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-      {
-        maxZoom: 19,
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      },
-    ).addTo(map);
+    // CARTO 베이스맵은 API 키가 필수가 되어 키 없이 쓸 수 있는 OSM 표준 타일을 사용한다
+    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
     L.control.zoom({ position: "bottomright" }).addTo(map);
 
     mapRef.current = map;

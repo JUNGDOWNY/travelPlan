@@ -13,8 +13,14 @@ export type Place = {
   /** "10:30" 같은 예정 시각. 없으면 표시하지 않는다 */
   time?: string;
   desc?: string;
+  /** 앞 일정에서 여기까지 오는 방법. 리스트에서 항목 사이에 화살표와 함께 표시된다 */
+  move?: string;
   /** 연결된 바우처 id (있으면 리스트에 바우처 버튼이 나온다) */
   voucher?: string;
+  /** 구글맵 공유 링크. 없으면 좌표로 검색 링크를 만든다 */
+  mapsUrl?: string;
+  /** 바우처 탭에는 넣지 않는 참고 링크 (유튜브 등). 일정 카드·지도 팝업에 버튼으로 나온다 */
+  links?: { label: string; href: string }[];
   lat: number;
   lng: number;
 };
@@ -50,6 +56,7 @@ export const tripDays: TripDay[] = [
     places: [
       {
         name: "인천국제공항 T1 → 이스탄불",
+        voucher: "flight-icn-ist",
         category: "flight",
         time: "00:05 → 05:55",
         desc: "터키항공 TK91 · 이스탄불 환승 대기 2시간 50분",
@@ -59,8 +66,8 @@ export const tripDays: TripDay[] = [
       {
         name: "이스탄불 공항 → 헬싱키",
         category: "flight",
-        time: "08:45 → 11:30",
-        desc: "터키항공 TK1761 · 헬싱키 환승 대기 1시간 35분",
+        time: "08:45 → 11:20",
+        desc: "터키항공 TK1761 · 헬싱키 환승 대기 1시간 45분",
         lat: 41.2753,
         lng: 28.7519,
       },
@@ -76,8 +83,8 @@ export const tripDays: TripDay[] = [
         name: "로바니에미 숙소",
         voucher: "stay-rovaniemi",
         category: "stay",
-        time: "15:30",
-        desc: "공항에서 택시로 15분 · Bolt 앱으로 택시 잡기",
+        time: "16:00",
+        move: "택시 15분 · Bolt 앱으로 호출",
         lat: 66.5031,
         lng: 25.7211,
       },
@@ -85,7 +92,9 @@ export const tripDays: TripDay[] = [
         name: "Hanki",
         category: "food",
         time: "17:00",
+        move: "도보 17분",
         desc: "저녁 먹기",
+        mapsUrl: "https://maps.app.goo.gl/7HtT4F1hY9XPu9k39",
         lat: 66.4978,
         lng: 25.7296,
       },
@@ -93,7 +102,8 @@ export const tripDays: TripDay[] = [
         name: "McDonald's Rovaniemi Lampela",
         category: "sight",
         time: "18:30",
-        desc: "기념엽서 챙기기 · 도보 20분",
+        move: "도보 20분",
+        desc: "기념엽서 챙기기",
         lat: 66.4955,
         lng: 25.7114,
       },
@@ -101,7 +111,12 @@ export const tripDays: TripDay[] = [
         name: "K-Market Toriportti",
         category: "food",
         time: "20:00",
-        desc: "29일 저녁, 30일 점심 장보기",
+        desc: [
+          "29일 저녁, 30일 점심 장보기",
+          "🛒 Skyr 요거트 (레몬, 크림브륄레, 초코바닐라), 노던키친 블루베리 주스",
+          "🎁 기념품 추천: 게이샤 초콜릿, 자일리톨",
+        ].join("\n"),
+        move: "도보 20분",
         lat: 66.4999,
         lng: 25.7129,
       },
@@ -109,56 +124,69 @@ export const tripDays: TripDay[] = [
   },
   {
     date: "2026-11-29",
-    city: "헬싱키",
-    title: "헬싱키 시내 한 바퀴",
+    city: "로바니에미",
+    title: "산타마을 / 오로라헌팅",
     places: [
       {
-        name: "템펠리아우키오 교회",
-        category: "sight",
-        time: "10:00",
-        desc: "암반을 깎아 만든 교회 · 입장료 €8",
-        lat: 60.1725,
-        lng: 24.9255,
+        name: "Porokulma E",
+        voucher: "timetable-santa-bus",
+        category: "move",
+        time: "08:30",
+        desc: [
+          "숙소에서 도보 5분 빨간버스 탑승",
+          "기사님한테 카드 결제",
+          "8시 30분~40분 사이에 버스 옴",
+        ].join("\n"),
+        mapsUrl: "https://maps.app.goo.gl/BTCd9TGFSE47CjD59",
+        lat: 66.502777,
+        lng: 25.725884,
       },
       {
-        name: "캄피 침묵의 교회",
+        name: "산타클로스 마을",
+        voucher: "guide-santa-village",
         category: "sight",
-        time: "11:20",
-        desc: "나무로 지은 조용한 공간, 15분이면 충분",
-        lat: 60.169,
-        lng: 24.9316,
+        time: "09:05",
+        move: "버스 35분",
+        links: [
+          {
+            label: "유튜브",
+            href: "https://www.youtube.com/watch?v=Cp4RRAEgpeU",
+          },
+        ],
+        lat: 66.5436,
+        lng: 25.8472,
       },
       {
-        name: "카페 레가타",
+        name: "Santa's Salmon Place",
         category: "food",
-        time: "12:30",
-        desc: "바닷가 빨간 오두막 카페 · 시나몬 롤",
-        lat: 60.1836,
-        lng: 24.9128,
+        time: "10:40",
+        desc: "11시 오픈런",
+        mapsUrl: "https://maps.app.goo.gl/7s5RpnawWkyRJroh9",
+        lat: 66.5432731,
+        lng: 25.8540733,
       },
       {
-        name: "마켓 광장",
+        name: "Napapiiri L",
+        category: "move",
+        time: "15:35",
+        desc: [
+          "🚌 8번 버스 → Rovakadun pää 하차",
+          "19개 정류장 · 16:05쯤 내림",
+          "기사님한테 카드 결제",
+        ].join("\n"),
+        links: [{ label: "버스지도", href: "https://linkkari.fi/" }],
+        mapsUrl: "https://maps.app.goo.gl/vADHzJRTsM6jtk7T8",
+        lat: 66.5425039,
+        lng: 25.8438693,
+      },
+      {
+        name: "오로라 헌팅",
+        voucher: "tour-aurora-1129",
         category: "sight",
-        time: "14:30",
-        desc: "수오멘린나행 페리 선착장 바로 앞",
-        lat: 60.1675,
-        lng: 24.9525,
-      },
-      {
-        name: "수오멘린나 요새",
-        category: "sight",
-        time: "15:00",
-        desc: "페리 15분 · 유네스코 세계유산 섬",
-        lat: 60.1454,
-        lng: 24.9881,
-      },
-      {
-        name: "호텔 캄프 (숙소)",
-        category: "stay",
-        time: "20:00",
-        desc: "복귀",
-        lat: 60.1683,
-        lng: 24.9469,
+        time: "19:30",
+        desc: "숙소로 픽업",
+        lat: 66.5031,
+        lng: 25.7211,
       },
     ],
   },

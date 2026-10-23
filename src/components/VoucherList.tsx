@@ -30,7 +30,7 @@ export default function VoucherList({ focus }: Props) {
   return (
     <div className="max-w-3xl">
       <p className="text-sm text-slate-500">
-        항공 · 숙소 · 투어 예약 확인서 {vouchers.length}건
+        예약 확인서 · 시간표 {vouchers.length}건
       </p>
       {dates.map((date) => (
         <section key={date} className="mt-5">
@@ -79,8 +79,8 @@ export default function VoucherList({ focus }: Props) {
                     </a>
                   ) : (
                     <p className="mt-3 text-[11px] text-slate-400">
-                      확인서 링크 없음 · 구글 드라이브 공유 링크를 href 에
-                      넣으면 버튼이 생깁니다
+                      링크 없음 · 구글 드라이브 공유 링크를 href 에 넣으면
+                      버튼이 생깁니다
                     </p>
                   )}
                 </li>

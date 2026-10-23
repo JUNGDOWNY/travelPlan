@@ -5,6 +5,7 @@ import { useMemo, useRef, useState, useSyncExternalStore } from "react";
 import DatePickerModal from "@/components/DatePickerModal";
 import VoucherList from "@/components/VoucherList";
 import { categoryMeta, trip, tripDays, type Place } from "@/data/trip";
+import { voucherHref, voucherLabel } from "@/data/vouchers";
 import { formatLong, toKey } from "@/lib/date";
 
 // leaflet 은 window 에 의존하므로 서버 렌더링에서 제외한다
@@ -18,7 +19,10 @@ const TripMap = dynamic(() => import("@/components/TripMap"), {
 });
 
 function placeMapsUrl(place: Place) {
-  return `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`;
+  return (
+    place.mapsUrl ??
+    `https://www.google.com/maps/search/?api=1&query=${place.lat},${place.lng}`
+  );
 }
 
 function PinIcon() {
@@ -57,9 +61,75 @@ function TicketIcon() {
   );
 }
 
+function ClockIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="size-[15px]"
+      aria-hidden
+    >
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5V12l3 1.8" />
+    </svg>
+  );
+}
+
+function MapIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="size-[15px]"
+      aria-hidden
+    >
+      <path d="m9 4.5-5.5 2v13l5.5-2 6 2 5.5-2v-13l-5.5 2-6-2Z" />
+      <path d="M9 4.5v13M15 6.5v13" />
+    </svg>
+  );
+}
+
+function LinkIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="size-[15px]"
+      aria-hidden
+    >
+      <path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1" />
+      <path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1" />
+    </svg>
+  );
+}
+
+/** 이동수단 문구에서 수단을 추려 아이콘을 고른다 */
+function moveIcon(move: string) {
+  if (/도보|걸어/.test(move)) return "🚶";
+  if (/택시|Bolt|우버|Uber/i.test(move)) return "🚕";
+  if (/버스/.test(move)) return "🚌";
+  if (/기차|열차|레일|트램/.test(move)) return "🚆";
+  if (/지하철|메트로/.test(move)) return "🚇";
+  if (/페리|배/.test(move)) return "⛴️";
+  if (/렌트|차량|드라이브/.test(move)) return "🚗";
+  return "➡️";
+}
+
 /** 카드 하단 · 지도 팝업의 이동 버튼 공통 스타일 */
 const actionClass =
-  "inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[11px] font-semibold text-slate-600 transition hover:border-slate-400 hover:text-slate-900";
+  "inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-2 py-0.5 text-[12px] font-semibold text-slate-600 transition hover:border-slate-400 hover:text-slate-900";
 
 const navButtonClass = (active: boolean) =>
   `rounded-full px-4 py-2 text-xs font-semibold transition sm:text-sm ${
@@ -70,6 +140,12 @@ const navButtonClass = (active: boolean) =>
 
 /** 기기의 오늘 날짜. 서버 프리렌더 시점에는 알 수 없으므로 첫날을 스냅샷으로 쓴다 */
 const subscribeNoop = () => () => {};
+
+/**
+ * 오늘이 여행 기간이 아닐 때 처음 보여줄 날짜. 작업 중인 날로 맞춰 두면 편하다.
+ * 여행 기간에는 이 값과 상관없이 기기의 오늘 날짜가 우선한다.
+ */
+const FALLBACK_DATE = "2026-11-29";
 
 export default function TripPlanner() {
   const [tab, setTab] = useState<"plan" | "voucher">("plan");
@@ -89,11 +165,14 @@ export default function TripPlanner() {
   const todayKey = useSyncExternalStore(
     subscribeNoop,
     () => toKey(new Date()),
-    () => tripDays[0].date,
+    () => FALLBACK_DATE,
   );
+  const fallbackDate = tripDays.some((d) => d.date === FALLBACK_DATE)
+    ? FALLBACK_DATE
+    : tripDays[0].date;
   const defaultDate = tripDays.some((d) => d.date === todayKey)
     ? todayKey
-    : tripDays[0].date;
+    : fallbackDate;
   const selectedDate = pickedDate ?? defaultDate;
 
   const dayIndex = tripDays.findIndex((d) => d.date === selectedDate);
@@ -112,7 +191,7 @@ export default function TripPlanner() {
     }
   };
 
-  /** 리스트의 바우처 버튼 → 바우처 탭의 해당 카드로 이동 */
+  /** 링크가 아직 없는 바우처 → 바우처 탭의 해당 카드로 이동 (링크가 있으면 버튼이 바로 연다) */
   const openVoucher = (id: string) => {
     setVoucherFocus((prev) => ({ id, n: (prev?.n ?? 0) + 1 }));
     setTab("voucher");
@@ -196,10 +275,29 @@ export default function TripPlanner() {
                 const meta = categoryMeta[place.category];
                 const active = i === activeIndex;
                 const voucherId = place.voucher;
+                const voucherText = voucherId ? voucherLabel(voucherId) : "";
+                const voucherLink = voucherId ? voucherHref(voucherId) : undefined;
+                const voucherIcon =
+                  voucherText === "시간표" ? (
+                    <ClockIcon />
+                  ) : voucherText === "동선" ? (
+                    <MapIcon />
+                  ) : (
+                    <TicketIcon />
+                  );
+                const links = place.links ?? [];
                 // 공항은 구글맵을 열어봐야 쓸모가 없으므로 항공편은 버튼을 뺀다
                 const showMaps = place.category !== "flight";
                 return (
                   <li key={`${place.name}-${i}`}>
+                    {/* 앞 일정에서 오는 방법 */}
+                    {i > 0 && place.move && (
+                      <p className="mb-1.5 flex items-center gap-1.5 pl-5 text-[11px] text-slate-400">
+                        <span aria-hidden>↓</span>
+                        <span aria-hidden>{moveIcon(place.move)}</span>
+                        {place.move}
+                      </p>
+                    )}
                     <div
                       className={`rounded-xl border bg-white px-2.5 py-2 transition ${
                         active
@@ -233,11 +331,11 @@ export default function TripPlanner() {
                               {meta.emoji} {meta.label}
                             </span>
                           </span>
-                          <span className="block text-sm font-semibold text-slate-900">
+                          <span className="block text-[15px] font-semibold text-slate-900">
                             {place.name}
                           </span>
                           {place.desc && (
-                            <span className="mt-0.5 block text-xs leading-snug text-slate-500">
+                            <span className="mt-0.5 block whitespace-pre-line text-[13px] leading-snug text-slate-500">
                               {place.desc}
                             </span>
                           )}
@@ -245,7 +343,7 @@ export default function TripPlanner() {
                       </button>
 
                       {/* 이동 버튼 (항공편은 없음). 배지 폭만큼 들여쓴다 */}
-                      {(showMaps || voucherId) && (
+                      {(showMaps || voucherId || links.length > 0) && (
                         <div className="mt-1.5 flex flex-wrap gap-1 pl-[30px]">
                           {showMaps && (
                             <a
@@ -258,16 +356,40 @@ export default function TripPlanner() {
                               구글맵
                             </a>
                           )}
-                          {voucherId && (
+                          {/* 확인서 링크가 있으면 바로 열고, 없으면 바우처 탭으로 */}
+                          {voucherId && voucherLink && (
+                            <a
+                              href={voucherLink}
+                              target="_blank"
+                              rel="noreferrer"
+                              className={actionClass}
+                            >
+                              {voucherIcon}
+                              {voucherText}
+                            </a>
+                          )}
+                          {voucherId && !voucherLink && (
                             <button
                               type="button"
                               onClick={() => openVoucher(voucherId)}
                               className={actionClass}
                             >
-                              <TicketIcon />
-                              바우처
+                              {voucherIcon}
+                              {voucherText}
                             </button>
                           )}
+                          {links.map((link) => (
+                            <a
+                              key={link.href}
+                              href={link.href}
+                              target="_blank"
+                              rel="noreferrer"
+                              className={actionClass}
+                            >
+                              <LinkIcon />
+                              {link.label}
+                            </a>
+                          ))}
                         </div>
                       )}
                     </div>

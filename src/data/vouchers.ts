@@ -8,7 +8,8 @@
  *     공개해도 괜찮은 값만 code 에 적고, 아니면 "6XK2**" 처럼 가리거나 비워 둔다.
  */
 
-export type VoucherKind = "flight" | "stay" | "tour" | "transport";
+export type VoucherKind =
+  "flight" | "stay" | "tour" | "transport" | "timetable" | "guide";
 
 export type Voucher = {
   /** 일정 화면에서 이 바우처로 이동할 때 쓰는 고유 id */
@@ -35,9 +36,40 @@ export const voucherKindMeta: Record<
     emoji: "🚆",
     tone: "bg-slate-200 text-slate-700",
   },
+  timetable: {
+    label: "시간표",
+    emoji: "🕑",
+    tone: "bg-emerald-100 text-emerald-700",
+  },
+  guide: {
+    label: "동선",
+    emoji: "🗺️",
+    tone: "bg-amber-100 text-amber-700",
+  },
 };
 
+/** 확인서 링크. 일정 화면의 버튼은 링크가 있으면 바우처 탭 대신 이 링크를 바로 연다 */
+export function voucherHref(id: string) {
+  return vouchers.find((v) => v.id === id)?.href;
+}
+
+/** 일정 화면의 버튼 문구. 시간표·동선은 "바우처" 대신 각자 이름으로 보여준다 */
+export function voucherLabel(id: string) {
+  const kind = vouchers.find((v) => v.id === id)?.kind;
+  if (kind === "timetable") return "시간표";
+  if (kind === "guide") return "동선";
+  return "바우처";
+}
+
 export const vouchers: Voucher[] = [
+  {
+    kind: "flight",
+    id: "flight-icn-ist",
+    title: "인천 → 이스탄불 · TK91",
+    subtitle: "터키항공 · 11/28 00:05 출발",
+    date: "2026-11-28",
+    href: "https://drive.google.com/file/d/1JQzPIkcCVXpl2tnB0FtrGd3yL1ngZ9LI/view?usp=drive_link",
+  },
   {
     kind: "stay",
     id: "stay-rovaniemi",
@@ -45,6 +77,30 @@ export const vouchers: Voucher[] = [
     subtitle: "11/28 체크인 · 공항에서 택시로 15분 (Bolt 앱)",
     date: "2026-11-28",
     href: "https://drive.google.com/file/d/198Vr0UatN-xLWcvJ9MFq1G0eRYnQRBDz/view?usp=drive_link",
+  },
+  {
+    kind: "timetable",
+    id: "timetable-santa-bus",
+    title: "산타마을 버스 시간표",
+    subtitle: "빨간 버스 · Porokulma E 정류장 · 기사님께 카드 결제",
+    date: "2026-11-29",
+    href: "https://www.airportbus.fi/pages/timetables",
+  },
+  {
+    kind: "guide",
+    id: "guide-santa-village",
+    title: "산타마을 동선",
+    subtitle: "산타클로스 마을 둘러보는 순서",
+    date: "2026-11-29",
+    href: "https://drive.google.com/file/d/15B_AuD3wR6Nzhg4hPuh6oQlwZJ5CFZRL/view?usp=drive_link",
+  },
+  {
+    kind: "tour",
+    id: "tour-aurora-1129",
+    title: "오로라 헌팅 투어",
+    subtitle: "11/29 19:30 · 숙소로 픽업",
+    date: "2026-11-29",
+    href: "https://drive.google.com/file/d/1lJ1nA8MMYdL2k004-uNiX6i4nsjmlnGM/view?usp=sharing",
   },
   {
     kind: "flight",
