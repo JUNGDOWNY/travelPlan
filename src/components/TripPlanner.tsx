@@ -145,7 +145,7 @@ const subscribeNoop = () => () => {};
  * 오늘이 여행 기간이 아닐 때 처음 보여줄 날짜. 작업 중인 날로 맞춰 두면 편하다.
  * 여행 기간에는 이 값과 상관없이 기기의 오늘 날짜가 우선한다.
  */
-const FALLBACK_DATE = "2026-11-29";
+const FALLBACK_DATE = "2026-11-28";
 
 export default function TripPlanner() {
   const [tab, setTab] = useState<"plan" | "voucher">("plan");
@@ -290,8 +290,8 @@ export default function TripPlanner() {
                 const showMaps = place.category !== "flight";
                 return (
                   <li key={`${place.name}-${i}`}>
-                    {/* 앞 일정에서 오는 방법 */}
-                    {i > 0 && place.move && (
+                    {/* 앞 일정에서 오는 방법. 첫 일정이면 숙소에서 출발하는 이동 */}
+                    {place.move && (
                       <p className="mb-1.5 flex items-center gap-1.5 pl-5 text-[11px] text-slate-400">
                         <span aria-hidden>↓</span>
                         <span aria-hidden>{moveIcon(place.move)}</span>
