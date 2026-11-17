@@ -815,18 +815,13 @@ export const tripDays: TripDay[] = [
           "초록색 i 표시 Tourist Info 가서 시티패스 교환 (지도상 1번 i)",
           "🖊️ 네임펜 챙기기 · 패스에 시간 써야 됨",
         ].join("\n"),
-        links: [
-          {
-            label: "역 바우처",
-            href: "https://drive.google.com/file/d/17-I4PNj2laLpAM9M6_4iw8yrDI0PaiRQ/view?usp=sharing",
-          },
-        ],
         mapsUrl: "https://maps.app.goo.gl/Y7mQXWYSEVUULHMP7",
         lat: 47.8130272,
         lng: 13.0450386,
       },
       {
         name: "아들러호프",
+        voucher: "stay-adlerhof",
         category: "stay",
         time: "14:00",
         desc: "짐 맡기기",
@@ -1058,6 +1053,7 @@ export const tripDays: TripDay[] = [
       },
       {
         name: "쿠이 알핀 호텔",
+        voucher: "stay-kuy-alpin",
         category: "stay",
         time: "10:00",
         desc: "짐 맡기기",
