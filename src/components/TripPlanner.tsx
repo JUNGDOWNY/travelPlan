@@ -240,22 +240,23 @@ export default function TripPlanner() {
 
         {tab === "plan" && (
           <>
-            {/* 날짜 변경 → 하루 요약 → 지도 순서 */}
-            <button
-              type="button"
-              onClick={() => setCalendarOpen(true)}
-              className="inline-flex h-[26px] items-center gap-1 rounded-full border border-slate-300 bg-white px-2.5 text-[11px] font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100"
-            >
-              <span aria-hidden>📅</span> 날짜 변경
-            </button>
-
-            <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+            {/* 하루 요약 (제목 · DAY · 날짜 변경) → 지도 순서 */}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
               <h2 className="text-lg font-bold text-slate-900 sm:text-xl">
                 {day.title}
               </h2>
-              <p className="text-xs text-slate-500 sm:text-sm">
-                DAY {dayIndex + 1} · {formatLong(day.date)}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-xs text-slate-500 sm:text-sm">
+                  DAY {dayIndex + 1} · {formatLong(day.date)}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setCalendarOpen(true)}
+                  className="inline-flex h-[26px] items-center gap-1 rounded-full border border-slate-300 bg-white px-2.5 text-[11px] font-semibold text-slate-700 shadow-sm transition hover:bg-slate-100"
+                >
+                  <span aria-hidden>📅</span> 날짜 변경
+                </button>
+              </div>
             </div>
 
             <section ref={mapSectionRef} className="mt-3 scroll-mt-28">
@@ -287,7 +288,7 @@ export default function TripPlanner() {
                   );
                 const links = place.links ?? [];
                 // 공항은 구글맵을 열어봐야 쓸모가 없으므로 항공편은 버튼을 뺀다
-                const showMaps = place.category !== "flight";
+                const showMaps = place.category !== "flight" && !place.hideMaps;
                 return (
                   <li key={`${place.name}-${i}`}>
                     {/* 앞 일정에서 오는 방법. 첫 일정이면 숙소에서 출발하는 이동 */}

@@ -60,6 +60,7 @@ function popupNode(
   // 바우처는 확인서 링크가 있으면 바로 열고, 없으면 바우처 탭으로 보낸다
   const actions = [
     place.category !== "flight" &&
+      !place.hideMaps &&
       `<a href="${mapsUrl(place)}" target="_blank" rel="noreferrer" class="${POPUP_PILL}">구글맵</a>`,
     voucherId &&
       (voucherLink
