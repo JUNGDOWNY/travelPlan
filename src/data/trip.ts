@@ -830,20 +830,13 @@ export const tripDays: TripDay[] = [
         lng: 13.0417983,
       },
       {
-        name: "Kebap Kolo",
+        name: "7 Döner",
         category: "food",
         time: "14:30",
-        move: "도보 1분",
-        desc: [
-          "Chili Cheese Dürüm Pute (칠리치즈 듀럼)",
-          "Kebab Pute (칠면조 케밥) · Kebab Rippe (소고기 케밥)",
-          "고수 빼 달라고 하기",
-        ].join("\n"),
-        // 받은 링크가 다른 가게(Il Corallo)로 열려서 이름으로 검색한다
-        mapsUrl:
-          "https://www.google.com/maps/search/?api=1&query=Kebap+Kolo+Jahnstra%C3%9Fe+Salzburg",
-        lat: 47.8142809,
-        lng: 13.041523,
+        desc: "Klassischer Steak Döner (스테이크 케밥)",
+        mapsUrl: "https://maps.app.goo.gl/TK883DSf6i2cm9Sq5",
+        lat: 47.8098653,
+        lng: 13.0423118,
       },
       {
         name: "미라벨 궁전",
@@ -1013,6 +1006,22 @@ export const tripDays: TripDay[] = [
         mapsUrl: "https://maps.app.goo.gl/ZtTybxefBPFvhnsRA",
         lat: 47.8130651,
         lng: 13.0451006,
+      },
+      {
+        name: "Kebap Kolo",
+        category: "food",
+        time: "21:00",
+        desc: [
+          "Chili Cheese Dürüm Pute (칠리치즈 듀럼)",
+          "Kebab Pute (칠면조 케밥) · Kebab Rippe (소고기 케밥)",
+          "고수 빼 달라고 하기",
+          "🥡 8일 아침에 먹을 케밥 포장",
+        ].join("\n"),
+        // 받은 링크가 다른 가게(Il Corallo)로 열려서 이름으로 검색한다
+        mapsUrl:
+          "https://www.google.com/maps/search/?api=1&query=Kebap+Kolo+Jahnstra%C3%9Fe+Salzburg",
+        lat: 47.8142809,
+        lng: 13.041523,
       },
       {
         name: "Shan, China Restaurant",
